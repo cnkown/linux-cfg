@@ -8,48 +8,48 @@ PATH=$(pwd)
 # -U, --upgrade
 # -c, --cascade
 # -y, --refresh
-# pacman -Sy
+# pacman -S
 # pacman -Syy
 # pacman -Rs 删除指定软件包，及其所有没有被其他已安装软件包使用的依赖关系
 # pacman -Rsc 要删除软件包和所有依赖这个软件包的程序
 
 MirrorsCM(){
-    sudo pacman-mirrors -i -c China -m rank
-    sudo pacman -Syu
+    pacman-mirrors -i -c China -m rank
+    pacman -Syu
 
-    sudo echo '''
+    echo '''
 [archlinuxcn]
 SigLevel = Optional TrustedOnly
 Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
 ''' >> /etc/pacman.conf
 
-    sudo pacman -Sy archlinuxcn-keyring
-    sudo pacman -Syy
+    pacman -S archlinuxcn-keyring
+    pacman -Syy
 
-    sudo pacman -Sy yay base-devel
-    sudo pacman -Sy yaourt
+    pacman -S yay base-devel
+    pacman -S yaourt
 
-    sudo pacman -Syyu
+    pacman -Syyu
 }
 
 SoftIns(){
     pip install speedtest_cli
-    sudo pacman -Sy neofetch
+    pacman -S neofetch
 
-    sudo pacman -Sy netease-cloud-music
-    sudo pacman -Sy google-chrome
-    sudo pacman -Sy wps-office
-    sudo pacman -Sy net-tools
-    yay -Sy ttf-wps-fonts
-    sudo pacman -Sy git
-    sudo pacman -Sy vim
-    sudo pacman -Sy code
+    pacman -S netease-cloud-music
+    pacman -S google-chrome
+    pacman -S wps-office
+    pacman -S net-tools
+    yay -S ttf-wps-fonts
+    pacman -S git
+    pacman -S vim
+    pacman -S code
 
-    wget https://dl.motrix.app/release/Motrix-1.5.10.AppImage -P ~/Downloads
-    wget https://github.com/Dr-Incognito/V2Ray-Desktop/releases/download/2.1.4/V2Ray-Desktop-v2.1.4-linux-x86_64.AppImage -P ~/Downloads
-    wget https://github.com/v2ray/v2ray-core/releases/download/v4.23.4/v2ray-linux-64.zip -P ~/Downloads
+    wget https://dl.motrix.app/release/Motrix-1.5.10.AppImage -P /home/ke/Downloads
+    wget https://github.com/Dr-Incognito/V2Ray-Desktop/releases/download/2.1.4/V2Ray-Desktop-v2.1.4-linux-x86_64.AppImage -P /home/ke/Downloads
+    wget https://github.com/v2ray/v2ray-core/releases/download/v4.23.4/v2ray-linux-64.zip -P /home/ke/Downloads
     
-    yay -Sy gtk-theme-arc-git
+    yay -S gtk-theme-arc-git
     # icon theme
     # mcmojava
 }
@@ -62,31 +62,31 @@ EnvirConfig(){
     firefox https://github.com/ohmyzsh/ohmyzsh/wiki/themes
     # theme change
     echo '''ZSH_THEME="want_theme"'''
-    code ~/.zshrc
-    source ~/.zshrc 
+    code /home/ke/.zshrc
+    source /home/ke/.zshrc 
     # autofill
     wget http://mimosa-pudica.net/src/incr-0.2.zsh
     mv incr-0.2.zsh .oh-my-zsh/plugins/incr/
     echo '''
-source ~/.oh-my-zsh/plugins/incr/incr*.zsh
-''' >> ~/.zshrc
-    source ~/.zshrc 
+source /home/ke/.oh-my-zsh/plugins/incr/incr*.zsh
+''' >> /home/ke/.zshrc
+    source /home/ke/.zshrc 
 }
 
 InputMethod(){
-    sudo pacman -Sy ibus-rime ibus-pinyin
+    pacman -S ibus-rime ibus-pinyin
     echo '''
 export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus
 ibus-daemon -x -d
-''' >> ~/.xprofile
+''' >> /home/ke/.xprofile
 }
 
 SysClean(){
-    sudo pacman -R $(pacman -Qdtq) # 清除系统中无用的包
-    sudo pacman -Scc # 清除已下载的安装包
-    sudo rm /var/lib/systemd/coredump/* # 清理崩溃日志
+    pacman -R $(pacman -Qdtq) # 清除系统中无用的包
+    pacman -Scc # 清除已下载的安装包
+    rm /var/lib/systemd/coredump/* # 清理崩溃日志
 }
 
 
@@ -97,8 +97,8 @@ Main(){
     EnvirConfig
     InputMethod
     SysClean
-    echo "your system need reboot"
+    reboot
 }
 
-Main 2>&1 |tee ${PATH}/manjaroconfig.txt
+Main 2>&1 | tee ${PATH}/manjaroconfig.txt
 
