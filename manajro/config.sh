@@ -39,14 +39,16 @@ SoftIns(){
     sudo pacman -Sy netease-cloud-music
     sudo pacman -Sy google-chrome
     sudo pacman -Sy wps-office
+    sudo pacman -Sy net-tools
     yay -Sy ttf-wps-fonts
     sudo pacman -Sy git
     sudo pacman -Sy vim
     sudo pacman -Sy code
 
-    wget https://dl.motrix.app/release/Motrix-1.5.10.AppImage -d ~/Downloads
-    wget https://github.com/Dr-Incognito/V2Ray-Desktop/releases/download/2.1.4/V2Ray-Desktop-v2.1.4-linux-x86_64.AppImage -d ~/Downloads
-
+    wget https://dl.motrix.app/release/Motrix-1.5.10.AppImage -P ~/Downloads
+    wget https://github.com/Dr-Incognito/V2Ray-Desktop/releases/download/2.1.4/V2Ray-Desktop-v2.1.4-linux-x86_64.AppImage -P ~/Downloads
+    wget https://github.com/v2ray/v2ray-core/releases/download/v4.23.4/v2ray-linux-64.zip -P ~/Downloads
+    
     yay -Sy gtk-theme-arc-git
     # icon theme
     # mcmojava
