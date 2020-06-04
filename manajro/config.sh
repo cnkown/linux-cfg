@@ -44,6 +44,9 @@ SoftIns(){
     sudo pacman -Sy vim
     sudo pacman -Sy code
 
+    wget https://dl.motrix.app/release/Motrix-1.5.10.AppImage -d ~/Downloads
+    wget https://github.com/Dr-Incognito/V2Ray-Desktop/releases/download/2.1.4/V2Ray-Desktop-v2.1.4-linux-x86_64.AppImage -d ~/Downloads
+
     yay -Sy gtk-theme-arc-git
     # icon theme
     # mcmojava
