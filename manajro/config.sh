@@ -69,7 +69,7 @@ BashConfig(){
     echo '''
 source /home/ke/.oh-my-zsh/plugins/incr/incr*.zsh
 ''' >> /home/ke/.zshrc
-    source /h ome/ke/.zshrc 
+    source /home/ke/.zshrc 
 }
 
 InputMethod(){
