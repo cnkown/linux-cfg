@@ -1,21 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
-PATH=$(pwd)
 
 # mirror-envir-software-biuti
-# pacman -S --sync
-# -R, --remove
-# -U, --upgrade
-# -c, --cascade
-# -y, --refresh
-# pacman -S
-# pacman -Syy
-# pacman -Rs 删除指定软件包，及其所有没有被其他已安装软件包使用的依赖关系
-# pacman -Rsc 要删除软件包和所有依赖这个软件包的程序
+# pacman -Sy 仅同步源
+# pacman -Syu 同步源并更新系统
+# pacman -R 仅删除包
+# pacman -Rc 删除包和依赖包
+# pacman -Rsn 删除程序文件以及所有依赖包并删除配置文件
+# pacman -Sc 清除pkg目录下的旧数据
+# pacman -Scc 清除所有下载的包和数据库
+# pacman -U 安装本地软件包,pkg.tar.gz
 
 MirrorsCM(){
+    echo "checking china mirrors,waitting......"
     pacman-mirrors -i -c China -m rank
-    pacman -Syu
+    pacman -Sy
 
     echo '''
 [archlinuxcn]
@@ -24,32 +23,32 @@ Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
 ''' >> /etc/pacman.conf
 
     pacman -S archlinuxcn-keyring
-    pacman -Syy
+    pacman -Sy
 
-    pacman -S yay base-devel
-    pacman -S yaourt
+    pacman -Sy yay base-devel --noconfirm
+    pacman -Sy yaourt --noconfirm
 
-    pacman -Syyu
+    pacman -Syu
 }
 
 SoftIns(){
     pip install speedtest_cli
-    pacman -S neofetch
+    pacman -Sy neofetch --noconfirm
 
-    pacman -S netease-cloud-music
-    pacman -S google-chrome
-    pacman -S wps-office
-    pacman -S net-tools
-    yay -S ttf-wps-fonts
-    pacman -S git
-    pacman -S vim
-    pacman -S code
+    pacman -Sy netease-cloud-music --noconfirm
+    pacman -Sy google-chrome --noconfirm
+    pacman -Sy wps-office --noconfirm
+    pacman -Sy net-tools --noconfirm
+    yay -Sy ttf-wps-fonts --noconfirm
+    pacman -Sy git --noconfirm
+    pacman -Sy vim --noconfirm
+    pacman -Sy code --noconfirm
 
     wget https://dl.motrix.app/release/Motrix-1.5.10.AppImage -P /home/ke/Downloads
     wget https://github.com/Dr-Incognito/V2Ray-Desktop/releases/download/2.1.4/V2Ray-Desktop-v2.1.4-linux-x86_64.AppImage -P /home/ke/Downloads
     wget https://github.com/v2ray/v2ray-core/releases/download/v4.23.4/v2ray-linux-64.zip -P /home/ke/Downloads
     
-    yay -S gtk-theme-arc-git
+    yay -Sy gtk-theme-arc-git --noconfirm
     # icon theme
     # mcmojava
 }
@@ -70,11 +69,11 @@ EnvirConfig(){
     echo '''
 source /home/ke/.oh-my-zsh/plugins/incr/incr*.zsh
 ''' >> /home/ke/.zshrc
-    source /home/ke/.zshrc 
+    source /h ome/ke/.zshrc 
 }
 
 InputMethod(){
-    pacman -S ibus-rime ibus-pinyin
+    pacman -Sy ibus-rime ibus-pinyin --noconfirm
     echo '''
 export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
@@ -84,9 +83,10 @@ ibus-daemon -x -d
 }
 
 SysClean(){
-    pacman -R $(pacman -Qdtq) # 清除系统中无用的包
-    pacman -Scc # 清除已下载的安装包
-    rm /var/lib/systemd/coredump/* # 清理崩溃日志
+    pacman -R $(pacman -Qdtq) --noconfirm
+    pacman -Scc --noconfirm
+    rm /var/lib/systemd/coredump/*  --noconfirm
+
 }
 
 
@@ -100,5 +100,5 @@ Main(){
     reboot
 }
 
-Main 2>&1 | tee ${PATH}/manjaroconfig.txt
+Main 2>&1 | tee -a /home/ke/Documents/manjaroconfig.txt
 
