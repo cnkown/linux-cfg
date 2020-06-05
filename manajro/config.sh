@@ -15,19 +15,19 @@ MirrorsCM(){
     echo "checking china mirrors,waitting......"
     pacman-mirrors -i -c China -m rank
     pacman -Sy
-
+sleep(5)
     echo '''
 [archlinuxcn]
 SigLevel = Optional TrustedOnly
 Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
 ''' >> /etc/pacman.conf
-
-    pacman -S archlinuxcn-keyring
+sleep(5)
+    pacman -S archlinuxcn-keyring --noconfirm
     pacman -Sy
-
-    pacman -Sy yay base-devel --noconfirm
-    pacman -Sy yaourt --noconfirm
-
+sleep(5)
+    pacman -S yay base-devel --noconfirm
+    pacman -S yaourt --noconfirm
+sleep(5)
     pacman -Syu
 }
 
@@ -53,7 +53,7 @@ SoftIns(){
     # mcmojava
 }
 
-EnvirConfig(){
+BashConfig(){
     # oh-my-shell
     chsh -s /bin/zsh
     wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh
@@ -94,10 +94,9 @@ Main(){
     clear
     MirrorsCM
     SoftIns
-    EnvirConfig
+    # BsahConfig
     InputMethod
     SysClean
-    reboot
 }
 
 Main 2>&1 | tee -a /home/ke/Documents/manjaroconfig.txt
