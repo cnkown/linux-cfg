@@ -45,7 +45,7 @@ Mermory_check() {
 Net_Check() {
     speedtest
     curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast #LemonBench;硬件、网络压力测试
-
+    # curl -fsL https://ilemonrain.com/download/shell/LemonBench.sh | bash
 }
 
 BBR_TCP_ON() {

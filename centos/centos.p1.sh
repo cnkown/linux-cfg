@@ -44,9 +44,9 @@ environment_Install() {
     mv vimrc /etc/
     cd centos
     yum -y update       #更新全部安装，is same as yum upgarde
-    
+    echo
     pip3 install --upgrade pip
-    
+    echo
     echo
     echo -e "${Msg_Info}生产环境安装完成！\\n"
     sleep 2
@@ -78,7 +78,7 @@ mermory_check() {
 
 net_Check() {
     pip3 install speedtest_cli
-    
+    echo
     mkdir Speedtest_Shell && cd Speedtest_Shell &&\
     wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh &&\
     cd $START_PATH
