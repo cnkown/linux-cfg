@@ -33,7 +33,7 @@ reboot_os() {
     fi
 }
 
-Environment_Install() {
+environment_Install() {
     yum -y install epel-release
     yum -y install net-tools wget curl firewalld
     yum -y install java gcc python3 python3-pip
@@ -52,41 +52,39 @@ Environment_Install() {
     sleep 2
 }
 
-Firewall_on() {
+firewall_on() {
     systemctl start firewalld
     systemctl status firewalld
-    firewall-cmd --zone=public --add-port=22/tcp --add-port=80/tcp --add-port=443/tcp --add-port=2443/tcp --add-port=9091/tcp --permanent
+    firewall-cmd --zone=public --add-port=22/tcp --add-port=80/tcp --add-port=443/tcp --add-port=2443/tcp --add-port=9091/tcp --add-port=26929/tcp --permanent
     firewall-cmd --reload 
     firewall-cmd --list-ports 
 }
 
-Hardware_Check() {
+hardware_Check() {
     yum -y install lshw
 }
 
-System_Status() {
+system_Status() {
     curl -o /etc/yum.repos.d/konimex-neofetch-epel-7.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo &&\
     yum -y install neofetch redhat-lsb-core
 }
 
-Mermory_check() {
+mermory_check() {
     cat /etc/fstab
     fdisk -l
     df -h
     free -h
 }
 
-Net_Check() {
+net_Check() {
     pip3 install speedtest_cli
-    speedtest
-#     curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast #LemonBench;硬件、网络压力测试
     
     mkdir Speedtest_Shell && cd Speedtest_Shell &&\
     wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh &&\
     cd $START_PATH
 }
 
-Kernel_Update() {
+kernel_Update() {
     yum install -y https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm &&\    #导入epel-repo源 centos7
 #     yum install -y https://www.elrepo.org/elrepo-release-8.0-2.el8.elrepo.noarch.rpm &&\
     rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org &&\                          #导入密钥
@@ -103,18 +101,20 @@ Kernel_Update() {
     reboot_os
 }
 
-Main() {
+main() {
     clear
-    Mermory_check &&\
-    Environment_Install &&\
-    Firewall_on &&\
-    Hardware_Check &&\
-    System_Status &&\
-    Net_Check &&\
-    Kernel_Update
+    mermory_check &&\
+    environment_Install &&\
+    firewall_on &&\
+    hardware_Check &&\
+    system_Status &&\
+    net_Check &&\
+    kernel_Update
 
     yum clean all       #clean cache
 }
 
-Main 2>&1 |tee ${START_PATH}/system_config.txt
+
+mkdir logs && cd logs && df -h |tee -a memory.txt &&free -h |tee -a memory.txt&&cd &START_PATH
+main 2>&1 |tee ${START_PATH}/system_config.txt
 

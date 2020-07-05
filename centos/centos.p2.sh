@@ -82,5 +82,5 @@ Main() {
     yum clean all       #clean cache
 }
 
+cd logs && df -h |tee -a memory.txt &&free -h |tee -a memory.txt&&cd &START_PATH
 Main 2>&1 |tee -a ${START_PATH}/system_config.txt
-
