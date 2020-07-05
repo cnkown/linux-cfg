@@ -54,6 +54,7 @@ environment_Install() {
 
 firewall_on() {
     systemctl start firewalld
+    systemctl enable firewalld
     systemctl status firewalld
     firewall-cmd --zone=public --add-port=22/tcp --add-port=80/tcp --add-port=443/tcp --add-port=2443/tcp --add-port=9091/tcp --add-port=26929/tcp --permanent
     firewall-cmd --reload 
