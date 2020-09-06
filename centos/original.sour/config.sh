@@ -126,7 +126,7 @@ cat /etc/fstab #磁盘配置现状
 free -m #内存、交换区剩余mb
 fdisk -l #磁盘配置量
 df -h <h:human k:kB m:mB> #磁盘数据使用量
-ll -h #当前文件列出，文件的大小单位kmg
+ll -h  #当前文件列出，文件的大小单位kmg
 ll -ah #列出当前所有文件目录，文件的大小单位kmg
 
 # 系统查看

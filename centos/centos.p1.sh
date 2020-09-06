@@ -22,7 +22,7 @@ Msg_Fail="${Font_Red}[Failed] ${Font_Suffix}"
 START_PATH=$(pwd)
 
 reboot_os() {
-    echo
+    echo 0
     echo -e "${Msg_Info}The system needs to reboot."
     read -p "Restart takes effect immediately. Do you want to restart system? [y/n]" is_reboot
     if [[ ${is_reboot} == "y" || ${is_reboot} == "Y" ]]; then
@@ -38,16 +38,13 @@ environment_Install() {
     yum -y install net-tools wget curl firewalld
     yum -y install java gcc python3 python3-pip
     yum -y install screen tar
-    yum -y install vim 
+    yum -y install vim
     yum -y install lsmod lsof
-    cd .. 
+    cd ..
     mv vimrc /etc/
     cd centos
-    yum -y update       #更新全部安装，is same as yum upgarde
-    echo
+    yum -y update #更新全部安装，is same as yum upgarde
     pip3 install --upgrade pip
-    echo
-    echo
     echo -e "${Msg_Info}生产环境安装完成！\\n"
     sleep 2
 }
@@ -56,9 +53,9 @@ firewall_on() {
     systemctl start firewalld
     systemctl enable firewalld
     systemctl status firewalld
-    firewall-cmd --zone=public --add-port=22/tcp --add-port=80/tcp --add-port=2443/tcp --add-port=9091/tcp --add-port=443/tcp --permanent
-    firewall-cmd --reload 
-    firewall-cmd --list-ports 
+    firewall-cmd --zone=public --add-port=22/tcp --add-port=443/tcp --add-port=2443/tcp --add-port=26929/tcp --permanent
+    firewall-cmd --reload
+    firewall-cmd --list-ports
 }
 
 hardware_Check() {
@@ -66,7 +63,7 @@ hardware_Check() {
 }
 
 system_Status() {
-    curl -o /etc/yum.repos.d/konimex-neofetch-epel-7.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo &&\
+    curl -o /etc/yum.repos.d/konimex-neofetch-epel-7.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo && \
     yum -y install neofetch redhat-lsb-core
 }
 
@@ -79,43 +76,41 @@ mermory_check() {
 
 net_Check() {
     pip3 install speedtest_cli
-    echo
-    mkdir Speedtest_Shell && cd Speedtest_Shell &&\
-    wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh &&\
-    cd $START_PATH
+    echo 0
+    mkdir Speedtest_Shell && cd Speedtest_Shell && \
+    wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh && \
+    cd ${START_PATH}
 }
 
 kernel_Update() {
-    yum install -y https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm &&\    #导入epel-repo源 centos7
-#     yum install -y https://www.elrepo.org/elrepo-release-8.0-2.el8.elrepo.noarch.rpm &&\
-    rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org &&\                          #导入密钥
-    yum clean all && rm -rf /var/cache/yum &&\                                              #清楚yum缓存
-#     yum --disablerepo="*" --enablerepo="elrepo-kernel" list available | grep kernel-ml &&\  #检查当前能安装的内核版本
-    yum -y install --enablerepo=elrepo-kernel kernel-ml &&\                                 #安装最新内核
+    yum install -y https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm && \  #导入epel-repo源 centos7
+    echo 0                                                                                 #     yum install -y https://www.elrepo.org/elrepo-release-8.0-2.el8.elrepo.noarch.rpm &&\
+    rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org && \                        #导入密钥
+    yum clean all && rm -rf /var/cache/yum && \                                            #清楚yum缓存
+    echo 0                                                                                 #     yum --disablerepo="*" --enablerepo="elrepo-kernel" list available | grep kernel-ml &&\  #检查当前能安装的内核版本
+    yum -y install --enablerepo=elrepo-kernel kernel-ml && \                               #安装最新内核
     echo '将GRUB_TIMEOUT=5 改为 1 即等待 1 秒后启动'
-    vim /etc/default/grub &&\                                                               #将GRUB_TIMEOUT=5 改为 1 即等待 1 秒后启动
-    grub2-mkconfig -o /boot/grub2/grub.cfg &&\                                              #重新生成启动菜单列表
+    vim /etc/default/grub && \                   #将GRUB_TIMEOUT=5 改为 1 即等待 1 秒后启动
+    grub2-mkconfig -o /boot/grub2/grub.cfg && \  #重新生成启动菜单列表
     echo '#确认启动顺序，index=0 的内核版本应该等于刚刚更新的内核版本即为正确'
-    grubby --info=ALL &&\                                                                   #确认启动顺序，index=0 的内核版本应该等于刚刚更新的内核版本即为正确
-    read -p  "enter the serial number of the recently installed kernel. [0/1/2...] " num &&\
-    grub2-set-default $num &&\
+    grubby --info=ALL && \  #确认启动顺序，index=0 的内核版本应该等于刚刚更新的内核版本即为正确
+    read -p "enter the serial number of the recently installed kernel. [0/1/2...] " num && \
+    grub2-set-default $num && \
     reboot_os
 }
 
 main() {
     clear
-    mermory_check &&\
-    environment_Install &&\
-    firewall_on &&\
-    hardware_Check &&\
-    system_Status &&\
-    net_Check &&\
+    mermory_check && \
+    environment_Install && \
+    firewall_on && \
+    hardware_Check && \
+    system_Status && \
+    net_Check && \
     kernel_Update
-
-    yum clean all       #clean cache
+    yum clean all #clean cache
 }
 
-
-mkdir logs && cd logs && df -h |tee -a memory.txt &&free -h |tee -a memory.txt&&cd &START_PATH
-main 2>&1 |tee ${START_PATH}/system_config.txt
-
+mkdir logs && cd logs && df -h | tee -a memory.txt && free -h | tee -a memory.txt && \
+cd ${START_PATH}
+main 2>&1 | tee ${START_PATH}/system_config.txt

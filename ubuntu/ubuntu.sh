@@ -60,6 +60,7 @@ optimise(){
     sudo add-apt-repository ppa:apt-fast/stable #apt-fast update
     sudo apt update
     sudo apt install -y apt-fast
+
 }
 
 application(){
