@@ -22,6 +22,9 @@ tansmission_Install() {
 # file manage & transfer would like to using filezilla
 
 main() {
+    firewall-cmd --zone=public --add-port=9091/tcp --permanent
+    firewall-cmd --reload
+    firewall-cmd --list-ports
     tansmission_Install
 }
 
