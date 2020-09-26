@@ -24,15 +24,15 @@ START_PATH=$(pwd)
 Hardware_Check() {
     lshw -version
     lshw -short
-    cat /proc/cpuinfo 
+    cat /proc/cpuinfo
 }
 
 System_Status() {
-    neofetch 
-    lsb_release -a      #系统信息
-    
+    neofetch
+    lsb_release -a #系统信息
+
     uname －a
-    cat /proc/version   #Linux查看当前操作系统版本信息 
+    cat /proc/version #Linux查看当前操作系统版本信息
 }
 
 Mermory_check() {
@@ -51,22 +51,22 @@ Net_Check() {
 BBR_TCP_ON() {
     local param=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
     if [[ x"${param}" != x"bbr" ]]; then
-        modprobe tcp_bbr 
-        echo "tcp_bbr" >> /etc/modules-load.d/modules.conf 
-        echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf 
-        echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf 
-        sysctl -p  
-    else 
+        modprobe tcp_bbr
+        echo "tcp_bbr" >>/etc/modules-load.d/modules.conf
+        echo "net.core.default_qdisc=fq" >>/etc/sysctl.conf
+        echo "net.ipv4.tcp_congestion_control=bbr" >>/etc/sysctl.conf
+        sysctl -p
+    else
         echo "${Msg_Info}bbr already installed, Nothing to do...\n"
     fi
-    
+
 }
 
-BBR_Check() {    
+BBR_Check() {
     lsmod | grep bbr
-    sysctl net.ipv4.tcp_available_congestion_control 
+    sysctl net.ipv4.tcp_available_congestion_control
     sysctl net.ipv4.tcp_congestion_control
-    
+
     echo -e "${Msg_Success}\ntcp_bbr\nnet.ipv4.tcp_available_congestion_control = reno cubic bbr\nnet.ipv4.tcp_congestion_control = bbr"
 }
 
@@ -78,9 +78,16 @@ Main() {
     System_Status
     Mermory_check
     Net_Check
-    
-    yum clean all       #clean cache
+
+    yum clean all #clean cache
 }
 
-cd logs && df -h |tee -a memory.txt &&free -h |tee -a memory.txt&&cd &START_PATH
-Main 2>&1 |tee -a ${START_PATH}/system_config.txt
+cd logs && df -h | tee -a memory.txt && free -h | tee -a memory.txt && cd && START_PATH
+echo -e "${Msg_Info}The system will making a performance report."
+read -p "Do you really want to get a performance report?[y/n]" keepon
+if [[ ${keepon} == "y" || ${keepon} == "Y" ]]; then
+    Main 2>&1 | tee -a ${START_PATH}/system_performance.txt
+else
+    echo -e "${Msg_Info}Performance Testing is canceled..."
+    exit 0
+fi

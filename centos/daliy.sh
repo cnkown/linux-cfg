@@ -18,7 +18,8 @@ tansmission_Install() {
         '''
     systemctl start transmission-daemon.service vim /var/lib/transmission/.config/transmission-daemon/settings.json
 }
-#//caddy doesn't install anymore
+# caddy doesn't install anymore
+# file manage & transfer would like to using filezilla
 
 main() {
     tansmission_Install
