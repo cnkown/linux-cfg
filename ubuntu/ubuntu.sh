@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# å­—ä½“é¢œè‰²å®šä¹‰
+# ×ÖÌåÑÕÉ«¶¨Òå
 Font_Black="\033[30m"
 Font_Red="\033[31m"
 Font_Green="\033[32m"
@@ -11,7 +11,7 @@ Font_SkyBlue="\033[36m"
 Font_White="\033[37m"
 Font_Suffix="\033[0m"
 
-# æ¶ˆæ¯æç¤ºå®šä¹‰
+# ÏûÏ¢ÌáÊ¾¶¨Òå
 Msg_Info="${Font_Blue}[Info] ${Font_Suffix}"
 Msg_Warning="${Font_Yellow}[Warning] ${Font_Suffix}"
 Msg_Debug="${Font_Yellow}[Debug] ${Font_Suffix}"
@@ -19,155 +19,98 @@ Msg_Error="${Font_Red}[Error] ${Font_Suffix}"
 Msg_Success="${Font_Green}[Success] ${Font_Suffix}"
 Msg_Fail="${Font_Red}[Failed] ${Font_Suffix}"
 
-#apt = apt-getã€apt-cache å’Œ apt-config ä¸­æœ€å¸¸ç”¨å‘½ä»¤é€‰é¡¹çš„é›†åˆ
+START_PATH=$(pwd)
 
-beautify(){
-    gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
-    sudo apt install -y gnome-tweak-tool
-    #list of adds on extension
-    #dash to dock
-    #dash to panel
-    #system-monitor
-    #sudo apt-get install gir1.2-gtop-2.0 gir1.2-networkmanager-1.0 gir1.2-clutter-1.0
-    #tray icon
-    #user themes
-    #clipboard indicator
-    #cpu power manager
-    #freon
+reboot_os() {
+    echo 0
+    echo -e "${Msg_Info}The system needs to reboot."
+    read -p "Restart takes effect immediately. Do you want to restart system? [y/n]" is_reboot
+    if [[ ${is_reboot} == "y" || ${is_reboot} == "Y" ]]; then
+        reboot
+    else
+        echo -e "${Msg_Info}Reboot has been canceled..."
+        exit 0
+    fi
 }
 
-mirrors(){
-    sudo cp sources.list /etc/apt/
-    sudo apt update
-    sudo apt upgrade
+environment_Install() {
+    apt -y install epel-release
+    apt -y install net-tools wget curl firewalld
+    apt -y install java gcc python3 python3-pip
+    apt -y install screen tar
+    apt -y install vim
+    apt -y install lsmod lsof
+    cd ..
+    mv vimrc /etc/
+    cd centos
+    apt -y update #¸üĞÂÈ«²¿°²×°£¬is same as apt upgarde
+    pip3 install --upgrade pip
+    echo -e "${Msg_Info}Éú²ú»·¾³°²×°Íê³É£¡\\n"
+    sleep 2
 }
 
-timecheck(){
-    sudo apt install -y ntpdate
-    sudo ntpdate time.windows.com
-    sudo hwclock --localtime --systohc
+firewall_on() {
+    systemctl start firewalld
+    systemctl enable firewalld
+    systemctl status firewalld
+    firewall-cmd --zone=public --add-port=22/tcp --add-port=443/tcp --add-port=2443/tcp --add-port=26929/tcp --permanent
+    firewall-cmd --reload
+    firewall-cmd --list-ports
 }
 
-optimise(){
-    sudo apt install -y preload #åº”ç”¨é¢‘ç‡åˆ†æ
-
-    sudo add-apt-repository ppa:linrunner/tlp
-    sudo apt update
-    sudo apt install -y tlp tlp-rdw
-    sudo tlp start
-    sudo apt install -y indicator-cpufreq
-
-    sudo add-apt-repository ppa:apt-fast/stable #apt-fast update
-    sudo apt update
-    sudo apt install -y apt-fast
-
+hardware_Check() {
+    apt -y install lshw
 }
 
-application(){
-    sudo apt install -y vim
-    sudo cp vimrc /etc/vim/
-
-    sudo apt install -y g++
-    g++ -v
-    sleep 5
-
-    sudo add-apt-repository ppa:webupd8team/java
-    sudo apt install -y openjdk-11-jdk
-    java -version
-    sleep 5
-
-    sudo apt update && sudo apt install -y qbittorrent 
+system_Status() {
+    curl -o /etc/apt.repos.d/konimex-neofetch-epel-7.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo && \
+    apt -y install neofetch redhat-lsb-core
 }
 
-ch_java_vers_com(){
-    sudo update-alternatives --config java
-    # æŸ¥çœ‹å¹¶å¯é€‰åˆ‡æ¢javaç‰ˆæœ¬
-    # jdk 1.8.1(redhat) openjdk oracle 
-    sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk1.8.0_181/bin/java 300
-    sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk1.8.0_181/bin/javac 300
-    # æ·»åŠ javaç‰ˆæœ¬
-    java -version
-    sleep 5
+mermory_check() {
+    cat /etc/fstab
+    fdisk -l
+    df -h
+    free -h
 }
 
-mysql(){
-    sudo apt update&& sudo apt install mysql-server && sudo mysql_secure_installation
+net_Check() {
+    pip3 install speedtest_cli
+    echo 0
+    mkdir Speedtest_Shell && cd Speedtest_Shell && \
+    wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh && \
+    cd ${START_PATH}
 }
 
-
-winehq(){
-    sudo dpkg --add-architecture i386 
-    wget -nc https://dl.winehq.org/wine-builds/winehq.key
-    sudo apt-key add winehq.key
-    sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main' 
-    sudo apt update
-    sudo apt install -y --install-recommends winehq-stable
-
-    sudo apt install -y winetricks
-    sudo apt install -y winbind
-
-    winetricks dlls gdiplus
-    winetricks dlls msxml6
-    winetricks dlls msxml3
-    winetricks dlls msxml4
-    winetricks dlls corefonts
-    winetricks dlls d3dx9 d3dcompiler_43 xact_jun2010
-    winetricks dlls vcrun6 vcrun2003 vcrun2005 vcrun2008 vcrun2010 vcrun2013 vcrun2015
-
-    wget 'https://launchpad.net/takao-fonts/trunk/003.02.01/+download/takao-fonts-ttf-003.02.01.zip'
-    mv ./takao-fonts-ttf-003.02.01.zip $HOME/.cache/winetricks/takao/takao-fonts-ttf-003.02.01.zip
-    wget 'http://http.debian.net/debian/pool/main/f/fonts-baekmuk/fonts-baekmuk_2.2.orig.tar.gz'
-    mv ./fonts-baekmuk_2.2.orig.tar.gz $HOME/.cache/winetricks/baekmuk/ttf-baekmuk_2.2.orig.tar.gz
-    winetricks cjkfonts
-
+kernel_Update() {
+    apt install -y https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm && \  #µ¼Èëepel-repoÔ´ centos7
+    echo 0                                                                                 #     apt install -y https://www.elrepo.org/elrepo-release-8.0-2.el8.elrepo.noarch.rpm &&\
+    rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org && \                        #µ¼ÈëÃÜÔ¿
+    apt clean all && rm -rf /var/cache/apt && \                                            #Çå³şyum»º´æ
+    echo 0                                                                                 #     apt --disablerepo="*" --enablerepo="elrepo-kernel" list available | grep kernel-ml &&\  #¼ì²éµ±Ç°ÄÜ°²×°µÄÄÚºË°æ±¾
+    apt -y install --enablerepo=elrepo-kernel kernel-ml && \                               #°²×°×îĞÂÄÚºË
+    echo '½«GRUB_TIMEOUT=5 ¸ÄÎª 1 ¼´µÈ´ı 1 ÃëºóÆô¶¯'
+    vim /etc/default/grub && \                   #½«GRUB_TIMEOUT=5 ¸ÄÎª 1 ¼´µÈ´ı 1 ÃëºóÆô¶¯
+    grub2-mkconfig -o /boot/grub2/grub.cfg && \  #ÖØĞÂÉú³ÉÆô¶¯²Ëµ¥ÁĞ±í
+    echo '#È·ÈÏÆô¶¯Ë³Ğò£¬index=0 µÄÄÚºË°æ±¾Ó¦¸ÃµÈÓÚ¸Õ¸Õ¸üĞÂµÄÄÚºË°æ±¾¼´ÎªÕıÈ·'
+    grubby --info=ALL && \  #È·ÈÏÆô¶¯Ë³Ğò£¬index=0 µÄÄÚºË°æ±¾Ó¦¸ÃµÈÓÚ¸Õ¸Õ¸üĞÂµÄÄÚºË°æ±¾¼´ÎªÕıÈ·
+    read -p "enter the serial number of the recently installed kernel. [0/1/2...] " num && \
+    grub2-set-default $num && \
+    reboot_os
 }
 
-nvidia(){
-    sudo add-apt-repository ppa:graphics-drivers/ppa
-    ubuntu-drivers devices
-    read -p ":" num
-    sudo apt-get install nvidia-driver-$num
-
-    nvidia-smi
+main() {
+    clear
+    mermory_check && \
+    environment_Install && \
+    firewall_on && \
+    hardware_Check && \
+    system_Status && \
+    net_Check && \
+    kernel_Update
+    apt clean all #clean cache
 }
 
-uninstall(){
-    dpkg --list
-    # åˆ—å‡ºæ‰€å®‰è£…çš„è½¯ä»¶
-    dpkg -L <programname>
-    dpkg -l |grep <programname>
-    # åˆ—å‡ºè½¯ä»¶å®‰è£…ç›®å½•
-
-    #  " å¸è½½ç¨‹åº sudo apt autoremove
-    #  " sudo apt-get --purge remove <programname> 
-    #  " ä¸ä¿ç•™é…ç½®æ–‡ä»¶
-    #  " sudo apt-get remove <programname>
-    #  " ä¿ç•™é…ç½®æ–‡ä»¶
-    
-}
-
-
-
-Main(){
-    sudo passwd
-    beautify
-    if [ $? -eq 0 ]; then
-        echo -e Msg_Success
-    mirrors
-    if [ $? -eq 0 ]; then
-        echo -e Msg_Success
-    timecheck
-    if [ $? -eq 0 ]; then
-        echo -e Msg_Success
-    optimise
-    if [ $? -eq 0 ]; then
-        echo -e Msg_Success
-    application
-    if [ $? -eq 0 ]; then
-        echo -e Msg_Success
-
-
-}
-
-Main 
-
+mkdir logs && cd logs && df -h | tee -a memory.txt && free -h | tee -a memory.txt && \
+cd ${START_PATH}
+main 2>&1 | tee ${START_PATH}/system_config.txt
