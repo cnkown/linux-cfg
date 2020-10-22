@@ -7,7 +7,7 @@
 # |&&:上一个命令运行完毕之后接着运行,which name:查询程序所在位置, \:bash shell         |
 # |epel（extra packages for enterprise linux）是由 Fedora 社区打造                   |
 # |为RHEL及衍生发行版提供高质量软件包的项目，装EPEL,第三方源                           |
-# |     bash <(curl -L -s https://install.direct/go.sh)  :v2                        |
+# |     bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)                 |
 # |     systemctl enable/start/stop/restart service.name/v2ray                      |
 # |     bash <(curl -s -L https://git.io/v2ray.sh)  :v2+cdn   
 # |     https://intmainreturn0.com/v2ray-config-gen/#
@@ -266,3 +266,35 @@ git commit -m "注释" #2
 git pull origin master --allow-unrelated-histories #消除文件差异
 git push origin master #3
 
+# nginx 配置
+apt/yum install -y nginx
+
+#vim etc/nginx/nginx.conf
+//添加文件到其中
+autoindex on;# 显示目录
+autoindex_exact_size on;# 显示文件大小
+autoindex_localtime on;# 显示文件时间
+
+server {
+     listen       8080 default_server;
+     listen       [::]:8080 default_server;
+     server_name  _;
+     charset utf-8;
+     
+     root         /var/lib/transmission-daemon/downloads;
+
+     # Load configuration files for the default server block.
+     include /etc/nginx/default.d/*.conf;
+
+     location / {
+     }
+
+     error_page 404 /404.html;
+         location = /40x.html {
+     }
+
+     error_page 500 502 503 504 /50x.html;
+         location = /50x.html {
+     }
+
+ }
