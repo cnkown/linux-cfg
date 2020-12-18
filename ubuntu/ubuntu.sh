@@ -33,21 +33,27 @@ reboot_os() {
     fi
 }
 
-environment_Install() {
-    apt -y install net-tools wget curl firewalld
-    apt -y install gcc python3 python3-pip
-    apt -y install screen tar
-    apt -y install vim
-    cd ..
-    mv vimrc /etc/
-    cd $START_PATH
-    apt -y update #更新全部安装，is same as apt upgarde
+devCheck() {
+    cat /etc/fstab
+    fdisk -l
+    df -h
+    free -h
+    uname -a
+}
+
+envirInstall() {
+    apt install -y net-tools wget curl firewalld
+    apt install -y gcc python3 python3-pip
+    apt install -y screen tar
+    apt install -y vim
+    mv ../vimrc /etc/
+    apt -y update
     pip3 install --upgrade pip
     echo -e "${Msg_Info}生产环境安装完成！\\n"
     sleep 2
 }
 
-firewall_on() {
+firewallON() {
     systemctl start firewalld
     systemctl enable firewalld
     systemctl status firewalld
@@ -56,38 +62,52 @@ firewall_on() {
     firewall-cmd --list-ports
 }
 
-hardware_Check() {
-    apt -y install lshw
-}
-
-system_Status() {
-    apt -y install neofetch 
-}
-
-mermory_check() {
-    cat /etc/fstab
-    fdisk -l
-    df -h
-    free -h
-}
-
-net_Check() {
-    pip3 -y install speedtest_cli
+sysInformation() {
+    apt install -y neofetch 
+    pip3 install speedtest_cli
     wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh && \
+}
+
+bbrTCPON() {
+    local param=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
+    if [[ x"${param}" != x"bbr" ]]; then
+        modprobe tcp_bbr
+        echo "tcp_bbr" >>/etc/modules-load.d/modules.conf
+        echo "net.core.default_qdisc=fq" >>/etc/sysctl.conf
+        echo "net.ipv4.tcp_congestion_control=bbr" >>/etc/sysctl.conf
+        sysctl -p
+    else
+        echo "${Msg_Info}bbr already installed, Nothing to do...\n"
+    fi
+
+}
+
+ENDCheck() {
+    lsmod | grep bbr
+    sysctl net.ipv4.tcp_available_congestion_control
+    sysctl net.ipv4.tcp_congestion_control
+
+    echo -e "${Msg_Success}\ntcp_bbr\nnet.ipv4.tcp_available_congestion_control = reno cubic bbr\nnet.ipv4.tcp_congestion_control = bbr"
+    
+    neofetch
+    
+    speedtest
+    curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast
 }
 
 main() {
     clear
-    mermory_check && \
-    environment_Install && \
-    firewall_on && \
-    hardware_Check && \
-    system_Status && \
-    net_Check && \
-    kernel_Update
-    apt clean all #clean cache
+    devCheck
+    apt update
+    envirInstall
+    firewallON 
+    sysInformation
+
+    bbrTCPON
+    ENDCheck
+    reboot_os
+    apt clean all
 }
 
-mkdir logs && cd logs && df -h | tee -a memory.txt && free -h | tee -a memory.txt && \
-cd ${START_PATH}
+mkdir logs && cd logs && df -h | tee -a memory.txt && free -h | tee -a memory.txt 
 main 2>&1 | tee ${START_PATH}/system_config.txt
