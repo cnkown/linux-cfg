@@ -65,7 +65,7 @@ firewallON() {
 sysInformation() {
     apt install -y neofetch 
     pip3 install speedtest_cli
-    wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh && \
+    wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh 
 }
 
 bbrTCPON() {
