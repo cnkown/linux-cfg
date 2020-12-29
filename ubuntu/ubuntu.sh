@@ -77,7 +77,7 @@ bbrTCPON() {
         echo "net.ipv4.tcp_congestion_control=bbr" >>/etc/sysctl.conf
         sysctl -p
     else
-        echo "${Msg_Info}bbr already installed, Nothing to do...\n"
+        echo "${Msg_Info}bbr already enabled, Nothing to do...\n"
     fi
 
 }
@@ -109,5 +109,4 @@ main() {
     apt clean all
 }
 
-mkdir logs && cd logs && df -h | tee -a memory.txt && free -h | tee -a memory.txt 
 main 2>&1 | tee ${START_PATH}/system_config.txt
