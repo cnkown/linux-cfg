@@ -90,6 +90,8 @@ ENDCheck() {
     echo -e "${Msg_Success}\ntcp_bbr\nnet.ipv4.tcp_available_congestion_control = reno cubic bbr\nnet.ipv4.tcp_congestion_control = bbr"
     
     neofetch
+    free -h
+    df -h
     
     speedtest
     curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast
