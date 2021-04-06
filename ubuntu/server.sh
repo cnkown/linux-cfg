@@ -20,8 +20,10 @@ Msg_Success="${Font_Green}[Success] ${Font_Suffix}"
 Msg_Fail="${Font_Red}[Failed] ${Font_Suffix}"
 
 START_PATH=$(pwd)
+CURTIME=$(date "+%Y%m%d%H%M%S")
 
-reboot_os() {
+reboot_os() 
+{
     echo 0
     echo -e "${Msg_Info}The system needs to reboot."
     read -p "Restart takes effect immediately. Do you want to restart system? [y/n]" is_reboot
@@ -33,43 +35,57 @@ reboot_os() {
     fi
 }
 
-devCheck() {
-    cat /etc/fstab
-    fdisk -l
+infoBase() 
+{
     df -h
     free -h
     uname -a
+    echo
+    neofetch
+    speedtest
 }
 
-envirInstall() {
+envirmentSetup() 
+{
     apt install -y net-tools wget curl firewalld
-    apt install -y gcc python3 python3-pip
+    apt install -y java python3 python3-pip
     apt install -y screen tar
     apt install -y vim
+    echo
     mv ../vimrc /etc/
-    apt -y update
     pip3 install --upgrade pip
-    echo -e "${Msg_Info}生产环境安装完成！\\n"
-    sleep 2
+    echo
+    apt -y update
+    apt -y upgrade
+    apt -y autoclean
+    apt -y autoremove
 }
 
-firewallON() {
+firewallSetup() 
+{
     systemctl start firewalld
     systemctl enable firewalld
     systemctl status firewalld
+    echo
     firewall-cmd --zone=public --add-port=22/tcp --add-port=443/tcp --add-port=2443/tcp --add-port=26929/tcp --permanent
     firewall-cmd --reload
     firewall-cmd --list-ports
 }
 
-sysInformation() {
+infoConfigure() 
+{
     apt install -y neofetch 
     pip3 install speedtest_cli
-    wget https://ilemonra.in/LemonBenchIntl && mv LemonBenchIntl LemonBenchIntl.sh && chmod u+x LemonBenchIntl.sh 
+    echo
+    wget https://ilemonra.in/LemonBenchIntl 
+    mv LemonBenchIntl LemonBenchIntl.sh 
+    chmod u+x LemonBenchIntl.sh 
 }
 
-bbrTCPON() {
+bbrConfigure() 
+{
     local param=$(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}')
+    echo
     if [[ x"${param}" != x"bbr" ]]; then
         modprobe tcp_bbr
         echo "tcp_bbr" >>/etc/modules-load.d/modules.conf
@@ -79,36 +95,66 @@ bbrTCPON() {
     else
         echo "${Msg_Info}bbr already enabled, Nothing to do...\n"
     fi
-
 }
 
-ENDCheck() {
+osInfo() 
+{
+    echo -e "${Msg_Info}os info check"    
+    df -h
+    free -h
+    uname -a
+    neofetch    
+    echo
+    echo -e "${Msg_Info}show server bbr status"
     lsmod | grep bbr
     sysctl net.ipv4.tcp_available_congestion_control
     sysctl net.ipv4.tcp_congestion_control
-
-    echo -e "${Msg_Success}\ntcp_bbr\nnet.ipv4.tcp_available_congestion_control = reno cubic bbr\nnet.ipv4.tcp_congestion_control = bbr"
-    
-    neofetch
-    free -h
-    df -h
-    
+    echo -e "${Msg_Success}tcp_bbr\nnet.ipv4.tcp_available_congestion_control = reno cubic bbr\nnet.ipv4.tcp_congestion_control = bbr"
+    echo
+    echo -e "${Msg_Info}clean cache"
+    apt autoremove
+    apt autoclean   
+    echo 
+    echo -e "${Msg_Info}network quality test"
     speedtest
     curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast
+    echo
 }
 
-main() {
+v2raySetup()
+{
+    bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
+    echo -e "${Msg_Info}"
+}
+
+transSetup()
+{
+
+}
+
+nginxSetup()
+{
+
+}
+
+main()
+{
     clear
-    devCheck
-    apt update
-    envirInstall
-    firewallON 
-    sysInformation
+    date
+    read -p "Do you want to configure running envirment?(yes to configure or no to check):" tip
+    if [[${tip} == "yes" || ${tip} == "y"]]; then
+        osInfo
+        echo
+        envirSetup
+        reboot_os
 
-    bbrTCPON
-    ENDCheck
-    reboot_os
-    apt clean all
+        BBRturn
+    else
+        osInfo
+        echo
+
+        BBRverify
+    fi    
 }
 
-main 2>&1 | tee ${START_PATH}/system_config.txt
+main 2>&1 | tee ${START_PATH}/server_${CURTIME}.log

@@ -26,3 +26,10 @@ linux configure shell files
   清除缓存 apt autoclean && apt autoremove
   重启操作系统 reboot
   
+4、git 代理加速
+  git config --global http.proxy "http://127.0.0.1:1081"
+  git config --global https.proxy "http://127.0.0.1:1081"
+  
+  git config --global unset http.proxy
+  git config --global unset https.proxy
+

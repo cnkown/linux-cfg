@@ -49,7 +49,7 @@ osInfo()
     echo -e "${Msg_Info}Output os infomation"
     neofetch 
     echo
-    echo -e "${Msg_Info}Network quality"
+    echo -e "${Msg_Info}Network quality test"
     speedtest
     echo
 }
@@ -76,22 +76,24 @@ envirSetup()
     echo
 }
 
-pluinSetup()
+pluginSetup()
 {
-    echo -e "${Msg_Info}gnome UI adjustment plagin"
+    echo -e "${Msg_Info}gnome UI adjustment plugin"
     sudo apt -y install gnome-tweak-tool 
     sudo apt -y install gnome-shell-extensions 
     sudo apt -y install gnome-shell-extension-dashtodock 
     echo
     echo -e "${Msg_info}os info read"
     sudo apt -y install neofetch
+    echo
+    echo -e "${Msg_info}network quality"
     sudo pip3 -y install speedtest_cli #command: speedtest
     echo
-    echo -e "${Msg_Info}system monitor plagin"
+    echo -e "${Msg_Info}system monitor plugin"
     sudo add-apt-repoory ppa:fossfreedom/indicator-sysmonitor
     sudo apt -y install indicator-sysmonitor
     echo
-    echo -e "${Msg_Info}lightness adjustment plagin"
+    echo -e "${Msg_Info}lightness adjustment plugin"
     sudo add-apt-repoory ppa:apandada1/brightness-controller 
     sudo apt -y install brightness-controller
     echo
@@ -195,6 +197,7 @@ main()
         systemRapair
         nvidiaVerify
     fi    
+    echo -e "${Msg_Success}done.\nexit 0"
 }
 
 main 2>&1 | tee ${START_PATH}/desktop_${CURTIME}.log
