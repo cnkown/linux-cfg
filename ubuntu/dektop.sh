@@ -22,7 +22,7 @@ Msg_Fail="${Font_Red}[Failed] ${Font_Suffix}"
 START_PATH=$(pwd)
 CURTIME=$(date "+%Y%m%d%H%M%S")
 
-reboot_os() 
+reboot_os() #重启本地主机
 {
     echo
     echo -e "${Msg_Info}The system needs to reboot."
@@ -35,7 +35,7 @@ reboot_os()
     fi
 }
 
-osInfo() 
+osInfo() #输出系统信息
 {
     echo -e "${Msg_Info}Disk partitions and capacity remaining"
     df -h
@@ -54,7 +54,7 @@ osInfo()
     echo
 }
 
-envirSetup() 
+envirSetup() #环境安装与部署
 {
     echo -e "${Msg_Info}terminal base envirment setup"
     sudo apt -y install net-tools wget curl firewalld #ifconfig
@@ -76,12 +76,13 @@ envirSetup()
     echo
 }
 
-pluginSetup()
+pluginSetup() #系统美化与可用插件
 {
     echo -e "${Msg_Info}gnome UI adjustment plugin"
     sudo apt -y install gnome-tweak-tool 
     sudo apt -y install gnome-shell-extensions 
     sudo apt -y install gnome-shell-extension-dashtodock 
+    gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize' #单击图标最小化
     echo
     echo -e "${Msg_info}os info read"
     sudo apt -y install neofetch
@@ -99,7 +100,7 @@ pluginSetup()
     echo
 }
 
-AppSetup()
+AppSetup() #常用软件安装
 {
     echo -e "${Msg_Info}chrome"
     sudo dpkg -i /media/zengke/MyPassport/Software/daliy/daliy.browser/google-chrome-stable_current_amd64.deb
@@ -114,7 +115,7 @@ AppSetup()
     sudo dpkg -i /media/zengke/MyPassport/Software/daliy/daliy.music.163/netease-cloud-music_1.2.1_amd64_ubuntu_20190428.deb
 }
 
-cudaSetup()
+cudaSetup() #cuda开发环境安装
 {
     echo -e "${Msg_Info}cuda setup"
     echo
@@ -158,7 +159,17 @@ cudaSetup()
     sudo apt autoremove
 }
 
-systemRapair()
+sysTimeR() #同步系统时钟
+{
+    echo -e "${Msg_Info}Setup Time Service"
+    sudo apt install -y ntpdate
+    echo -e "${Msg_Info}Sync Time with Windows time zone"
+    sudo ntpdate time.windows.com
+    echo -e "${Msg_Success}Lock time with Hardware."
+    sudo hwclock --localtime --systohc
+}
+
+systemRapair() #系统损坏插件修复
 {
     sudo apt --fix-broken install
     sudo apt --fix-missing
@@ -167,12 +178,21 @@ systemRapair()
     sudp apt -y update
 }
 
-nvidiaVerify()
+nvidiaVerify() #nvidia 有关的信息
 {
     echo -e "${nvidia driver}"
     nvidia-smi 
     echo -e "${Msg_Info}cuda"
     nvcc -V
+}
+
+envirInfo() #系统环境相关的信息
+{
+    echo -e "${Msg_Info}version information."
+    gcc --version
+    java --version
+    python --version
+    python3 --version
 }
 
 main()
@@ -188,7 +208,8 @@ main()
         envirSetup
         pluinSetup
         AppSetup
-        cudaSetu
+        cudaSetup
+        sysTimeR
         systemRapair
         reboot_os
     else
@@ -196,6 +217,7 @@ main()
         echo
         systemRapair
         nvidiaVerify
+        envirInfo
     fi    
     echo -e "${Msg_Success}done.\nexit 0"
 }
