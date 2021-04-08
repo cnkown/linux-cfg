@@ -49,7 +49,7 @@ envirmentSetup()
     apt install -y screen tar
     apt install -y vim
     echo
-    mv /etc/vimrc /etc/vimrc.bak
+    mv /etc/vim/vimrc /etc/vim/vimrc.bak
     cp ${START_PATH}/../vim_cfg/vimrc /etc/vimrc
     pip3 install --upgrade pip
     echo
