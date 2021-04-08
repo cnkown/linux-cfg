@@ -26,7 +26,7 @@ reboot_os() #重启本地主机
 {
     echo
     echo -e "${Msg_Info}The system needs to reboot."
-    read -p "Restart takes effect immediately. Do you want to restart system? [y/n]" is_reboot
+    read -p "${Msg_Warning}Restart takes effect immediately. Do you want to restart system? [y/n]" is_reboot
     if [[ ${is_reboot} == "y" || ${is_reboot} == "Y" ]]; then
         reboot
     else
@@ -52,6 +52,7 @@ osInfo() #输出系统信息
     echo -e "${Msg_Info}Network quality test"
     speedtest
     echo
+    read -p "${Msg_Success}press any key to Continue."
 }
 
 envirSetup() #环境安装与部署
@@ -120,7 +121,7 @@ cudaSetup() #cuda开发环境安装
     echo -e "${Msg_Info}cuda setup"
     echo
     read -p "${Msg_Warning}Input your os edition(1804 or 2010):" ose
-    if [[${ose} == "1804"]]; then
+    if [[ ${ose} == "1804" ]]; then
         wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin
         sudo mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
         # wget https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda-repo-ubuntu1804-11-2-local_11.2.2-460.32.03-1_amd64.deb
@@ -131,8 +132,8 @@ cudaSetup() #cuda开发环境安装
         sudo apt -y install cuda
         echo
         echo -e "${Msg_Info}You need manual install cuda-toolkit with 'apt -y install nvidia-cuda-toolkit'." # tips after exit
-        sleep 1.5 # pause shell 1.5 seconds.
-    else if [[${ose} == "2004"]]; then
+        read -p "${Msg_Success}press any key to Continue."
+    else if [[ ${ose} == "2004" ]]; then
         wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
         sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
         # wget https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda-repo-ubuntu2004-11-2-local_11.2.2-460.32.03-1_amd64.debsudo 
@@ -143,11 +144,11 @@ cudaSetup() #cuda开发环境安装
         sudo apt -y install cuda
         echo
         echo -e "${Msg_Info}You need manual install cuda-toolkit with 'apt -y install nvidia-cuda-toolkit'." # tips after exit
-        sleep 1.5 # pause shell 1.5 seconds.
+        read -p "${Msg_Success}press any key to Continue."
     else
         echo -e "${Msg_Error}error input!"
         read -p "${Msg_Warning}again(yes or no):" ag
-        if [[${ag} == "yes" || ${ag} == "y"]]; then
+        if [[ ${ag} == "yes" || ${ag} == "y" ]]; then
             echo -e "${Msg_Info}cuda setup again."
             cudaSetup
         else
@@ -172,7 +173,7 @@ sysTimeR() #同步系统时钟
 systemRapair() #系统损坏插件修复
 {
     sudo apt --fix-broken install
-    sudo apt --fix-missing
+    sudo apt --fix-missing install
     # sudo dpkg -i --force-overwrite *.deb
     sudp apt -y upgrade
     sudp apt -y update
@@ -193,16 +194,17 @@ envirInfo() #系统环境相关的信息
     java --version
     python --version
     python3 --version
+    read -p "${Msg_Success}press any key to Continue."
 }
 
 main()
 {
     clear
     date
-    read -p "Do you want to configure running envirment?(yes to configure or no to check):" tip
+    read -p "${Msg_Warning}Do you want to configure running envirment?(yes to configure or no to check):" tip
     echo -e "Get administrator privileges."
     sudo echo    
-    if [[${tip} == "yes" || ${tip} == "y"]]; then
+    if [[ ${tip} == "yes" || ${tip} == "y" ]]; then
         osInfo
         echo
         envirSetup

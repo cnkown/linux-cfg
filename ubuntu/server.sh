@@ -26,7 +26,7 @@ reboot_os()
 {
     echo 0
     echo -e "${Msg_Info}The system needs to reboot."
-    read -p "Restart takes effect immediately. Do you want to restart system? [y/n]" is_reboot
+    read -p "${Msg_Warning}Restart takes effect immediately. Do you want to restart system? [y/n]" is_reboot
     if [[ ${is_reboot} == "y" || ${is_reboot} == "Y" ]]; then
         reboot
     else
@@ -49,7 +49,7 @@ envirmentSetup()
     apt install -y screen tar
     apt install -y vim
     echo
-    cp ${START_PATH}/../vim_cfg/vimrc /etc/
+    cp ${START_PATH}/../vim_cfg/vimrc /etc/vimrc
     pip3 install --upgrade pip
     echo
     apt -y update
@@ -78,6 +78,7 @@ infoConfigure()
     mv LemonBenchIntl LemonBenchIntl.sh 
     chmod u+x LemonBenchIntl.sh 
     echo -e "${Msg_Info}Test Network with comand:LemonBenchIntl.sh -s fast"
+    read -p "${Msg_Success}press any key to Continue."
 }
 
 bbrConfigure() 
@@ -95,36 +96,12 @@ bbrConfigure()
     fi
 }
 
-osInfo() 
-{
-    echo -e "${Msg_Info}os info check"    
-    df -h
-    free -h
-    uname -a
-    neofetch    
-    echo
-    echo -e "${Msg_Info}show server bbr status"
-    lsmod | grep bbr
-    sysctl net.ipv4.tcp_available_congestion_control
-    sysctl net.ipv4.tcp_congestion_control
-    echo -e "${Msg_Success}tcp_bbr\nnet.ipv4.tcp_available_congestion_control = reno cubic bbr\nnet.ipv4.tcp_congestion_control = bbr"
-    echo
-    echo -e "${Msg_Info}clean cache"
-    apt autoremove
-    apt autoclean   
-    echo 
-    echo -e "${Msg_Info}network quality test"
-    speedtest
-    curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast
-    echo
-}
-
 v2raySetup()
 {
     echo -e "${Msg_Info}You need to manually configure V2RAY after installation complete."
     bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)
     echo -e "${Msg_Success}V2RAY direction is：/usr/local/etc/v2ray/"
-    read -p "${Msg_Info}Do you want to using local v2ray file?(yes to local cfg or no to weblink)" V2_CFG
+    read -p "${Msg_Warning}Do you want to using local v2ray file?(yes to local cfg or no to weblink)" V2_CFG
     if [[ ${V2_CFG} == "yes" || ${V2_CFG} == "y" ]]; then
         echo -e "${Msg_Success}you need config v2ray id. and last v2ray configure file has been bakup."
         mv /usr/local/etc/v2ray/config.json /usr/local/etc/v2ray/config.json.bak
@@ -138,27 +115,34 @@ v2raySetup()
         systemctl start v2ray
         echo -e "${Msg_Info}show v2ray service status."
         systemctl status v2ray
-        echo -e "${Msg_Warning}If error,rapired it with tips."
+        read -p "${Msg_Warning}If error,rapired it with tips."
     else
         echo -e "${Msg_Info}Manual config by yourself later." 
         echo -e "${Msg_Info}web link: https://intmainreturn0.com/v2ray-config-gen/#"
         echo -e "${Msg_Info}echo command to /usr/local/etc/v2ray/config.json"
-        echo -e "${Msg_Warning}Incomplete"
+        read -p "${Msg_Warning}INCOMPLETED.\npress any key to continue."
     fi
-    echo
     echo -e "${Msg_Info}善用systemctl命令\nsystemctl enable v2ray:注册v2ray自启动服务\nsystemctl start v2ray:启动v2ray服务\nsystemctl status v2ray:查询v2ray服务\nsystemctl stop v2ray:终止v2ray服务"
-    sleep 2
+    read -p "${Msg_Success}press any key to Continue."
 }
 
 transSetup()
 {
     echo -e "${Msg_Info}setup transmission remote server download service"
     apt install -y transmission-cli transmission-common transmission-daemon
+    mkdir /var/lib/transmission-daemon/downloads #创建下载服务文件夹
     echo -e "${Msg_Info}Stop download service"
     systemctl stop transmission-daemon.service
-    echo -e "${Msg_Info}rpc-authentication-required: true,\n  rpc-enabled: true,\n  rpc-password: password,\n  rpc-username: username,\n  rpc-whitelist-enabled: false"
-    vim /var/lib/transmission/.config/transmission-daemon/settings.json
-    mkdir /var/lib/transmission/Downloads #创建服务文件夹
+    read -p "${Msg_Warning}Do you want to configure manually?(yes to manually or no to using configure file.)" TRN_CFG
+    if [[ ${TRN_CFG} == "yes" || ${TRN_CFG} == "y" ]]; then 
+        echo -e "${Msg_Info}rpc-authentication-required: true,\n  rpc-enabled: true,\n  rpc-password: password,\n  rpc-username: username,\n  rpc-whitelist-enabled: false"
+        vim /var/lib/transmission/.config/transmission-daemon/settings.json
+    else
+        mv /var/lib/transmission-daemon/.config/transmission-daemon/settings.json /var/lib/transmission-daemon/.config/transmission-daemon/settings.json.bak
+        cp ${START_PATH}/transmission/transmission.settings.json /var/lib/transmission-daemon/.config/transmission-daemon/settings.json
+        echo -e "${Msg_Warning}PLEASE CONFIGURE PASSWORD."
+        vim /var/lib/transmission-daemon/.config/transmission-daemon/settings.json
+    fi
     echo -e "${Msg_Info}register transmission service"
     systemctl enable transmission-daemon.service
     echo -e "${Msg_Info}loading transmission service"
@@ -170,13 +154,17 @@ transSetup()
     firewall-cmd --zone=public --add-port=9091/tcp --permanent
     firewall-cmd --reload
     firewall-cmd --list-ports
+    echo -e "${Msg_Info}your configure is follows."
+    cat /var/lib/transmission-daemon/.config/transmission-daemon/settings.json
+    read -p "${Msg_Success}press any key to Continue."
 }
 
 nginxSetup()
 {
     echo -e "${Msg_Info}setup remote server with nginx service"
     apt install -y nginx
-
+    mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+    cp ${START_PATH}/nginx/nginx.conf /etc/nginx/nginx.conf
     echo -e "${Msg_Info}register nginx service"
     systemctl enable nginx
     echo -e "${Msg_Info}loading nginx service"
@@ -188,25 +176,66 @@ nginxSetup()
     firewall-cmd --zone=public --add-port=8080/tcp --permanent
     firewall-cmd --reload
     firewall-cmd --list-ports
+    echo
+    echo -e "${Msg_Info}your configure is follows."
+    cat /etc/nginx/nginx.conf
+    read -p "${Msg_Success}press any key to Continue."
+}
+
+osInfo() 
+{
+    echo -e "${Msg_Info}os info check"    
+    df -h
+    free -h
+    uname -a
+    neofetch    
+    echo
+    echo -e "${Msg_Info}show server bbr status"
+    lsmod | grep bbr
+    sysctl net.ipv4.tcp_available_congestion_control
+    sysctl net.ipv4.tcp_congestion_control
+    echo -e "${Msg_Success}tcp_bbr\nnet.ipv4.tcp_available_congestion_control = reno cubic bbr\nnet.ipv4.tcp_congestion_control = bbr"
+    read
+    echo -e "${Msg_Info}clean cache"
+    apt autoremove
+    apt autoclean   
+    echo 
+    echo -e "${Msg_Info}network quality test"
+    speedtest
+    read -p "${Msg_Warning}是否进行网络压力测试？(yes:进行网络压力测试，no:不进行网络压力测试)" NetBench
+    if [[ ${NetBench} == "yes" || ${NetBench} == "y" ]]; then
+        curl -fsL https://ilemonra.in/LemonBenchIntl | bash -s fast
+    fi
+    echo
 }
 
 main()
 {
     clear
     date
-    read -p "Do you want to configure running envirment?(yes to configure or no to check):" tip
-    if [[${tip} == "yes" || ${tip} == "y"]]; then
+    read -p "${Msg_Warning}Do you want to configure running envirment?(yes to configure or no to check):" tip
+    if [[ ${tip} == "yes" || ${tip} == "y" ]]; then
         infoBase
         echo
-        envirSetup
+        envirmentSetup
+        firewallSetup
+        infoConfigure
+        bbrConfigure
+        read -p "${Msg_Warning}Do you want to install v2ray service?[y/n]" V2R
+        if [[ ${V2R} == "y" || ${V2R} == "Y" ]]; then
+            v2raySetup
+        fi
+        read -p "${Msg_Warning}Do you want to install transmission for download service?[y/n]" TRS
+        if [[ ${TRS} == "y" || ${TRS} == "Y" ]]; then
+            transSetup
+        fi
+        read -p "${Msg_Warning}Do you want to install nginx for web service?[y/n]" NGX
+        if [[ ${NGX} == "y" || ${NGX} == "Y" ]]; then
+            nginxSetup
+        fi
         reboot_os
-
-        BBRturn
     else
         osInfo
-        echo
-
-        BBRverify
     fi    
 }
 
