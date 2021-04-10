@@ -62,6 +62,7 @@ envirSetup() #环境安装与部署
     sudo apt -y install python3-pip #above 18.04 lts
     sudo apt -y install screen tar #-xvf 解压 、-cvf 加压 
     sudo apt -y install vim git 
+    sudo apt -y install locate #文件搜索命令,find [路径] [文件属性]
     sudo apt -y update # update sources
     sudo apt -y upgrade # update software
     echo
@@ -175,8 +176,9 @@ systemRapair() #系统损坏插件修复
     sudo apt --fix-broken install
     sudo apt --fix-missing install
     # sudo dpkg -i --force-overwrite *.deb
-    sudp apt -y upgrade
-    sudp apt -y update
+    sudo apt -y upgrade
+    sudo apt -y update
+    sudo updatedb #更新文件系统
 }
 
 nvidiaVerify() #nvidia 有关的信息
