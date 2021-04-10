@@ -1,5 +1,5 @@
-# linux eassy configure
-linux configure shell files
+# linux eassy start
+desktop&server configure shell script
 
 注意事项：
 1、500G容量分区
