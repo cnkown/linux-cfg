@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ×ÖÌåÑÕÉ«¶¨Òå
+# å­—ä½“é¢œè‰²å®šä¹‰
 Font_Black="\033[30m"
 Font_Red="\033[31m"
 Font_Green="\033[32m"
@@ -11,7 +11,7 @@ Font_SkyBlue="\033[36m"
 Font_White="\033[37m"
 Font_Suffix="\033[0m"
 
-# ÏûÏ¢ÌáÊ¾¶¨Òå
+# æ¶ˆæ¯æç¤ºå®šä¹‰
 Msg_Info="${Font_Blue}[Info] ${Font_Suffix}"
 Msg_Warning="${Font_Yellow}[Warning] ${Font_Suffix}"
 Msg_Debug="${Font_Yellow}[Debug] ${Font_Suffix}"
@@ -22,7 +22,7 @@ Msg_Fail="${Font_Red}[Failed] ${Font_Suffix}"
 START_PATH=$(pwd)
 CURTIME=$(date "+%Y%m%d%H%M%S")
 
-reboot_os() #ÖØÆô±¾µØÖ÷»ú
+reboot_os() #é‡å¯æœ¬åœ°ä¸»æœº
 {
     echo
     echo -e "${Msg_Info}The system needs to reboot."
@@ -35,7 +35,7 @@ reboot_os() #ÖØÆô±¾µØÖ÷»ú
     fi
 }
 
-osInfo() #Êä³öÏµÍ³ĞÅÏ¢
+osInfo() #è¾“å‡ºç³»ç»Ÿä¿¡æ¯
 {
     echo -e "${Msg_Info}Disk partitions and capacity remaining"
     df -h
@@ -55,22 +55,23 @@ osInfo() #Êä³öÏµÍ³ĞÅÏ¢
     read -p "${Msg_Success}press any key to Continue."
 }
 
-envirSetup() #»·¾³°²×°Óë²¿Êğ
+envirSetup() #ç¯å¢ƒå®‰è£…ä¸éƒ¨ç½²
 {
     echo -e "${Msg_Info}terminal base envirment setup"
     sudo apt -y install net-tools wget curl firewalld #ifconfig
     sudo apt -y install python3-pip #above 18.04 lts
-    sudo apt -y install screen tar #-xvf ½âÑ¹ ¡¢-cvf ¼ÓÑ¹ 
-    sudo apt -y install vim git 
-    sudo apt -y install locate #ÎÄ¼şËÑË÷ÃüÁî,find [Â·¾¶] [ÎÄ¼şÊôĞÔ]
+    sudo apt -y install screen tar #-xvf è§£å‹ ã€-cvf åŠ å‹ 
+    sudo apt -y install vim git
+    sudo apt -y install gcc 
+    sudo apt -y install locate #æ–‡ä»¶æœç´¢å‘½ä»¤,find [è·¯å¾„] [æ–‡ä»¶å±æ€§]
     sudo apt -y update # update sources
     sudo apt -y upgrade # update software
     echo
     echo -e "${Msg_Info}java envirment setup"
     sudo add-apt-repository ppa:webupd8team/java
     sudo apt -y install java-1.8.0-openjdk-1_amd64
-    sudo update-java-alternatives -l #ÁĞ¾ÙÒ»ÏµÁĞµÄjava°²×°°æ±¾
-    sudo update-java-alternatives -s java-1.8.0-openjdk-amd64 #ÇĞ»»µ½Ö¸¶¨µÄjava°æ±¾ -s --select
+    sudo update-java-alternatives -l #åˆ—ä¸¾ä¸€ç³»åˆ—çš„javaå®‰è£…ç‰ˆæœ¬
+    sudo update-java-alternatives -s java-1.8.0-openjdk-amd64 #åˆ‡æ¢åˆ°æŒ‡å®šçš„javaç‰ˆæœ¬ -s --select
     echo
     echo -e "${Msg_Info}os cache remove"
     sudo apt -y autoremove 
@@ -78,31 +79,31 @@ envirSetup() #»·¾³°²×°Óë²¿Êğ
     echo
 }
 
-pluginSetup() #ÏµÍ³ÃÀ»¯Óë¿ÉÓÃ²å¼ş
+pluginSetup() #ç³»ç»Ÿç¾åŒ–ä¸å¯ç”¨æ’ä»¶
 {
     echo -e "${Msg_Info}gnome UI adjustment plugin"
     sudo apt -y install gnome-tweak-tool 
     sudo apt -y install gnome-shell-extensions 
     sudo apt -y install gnome-shell-extension-dashtodock 
-    gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize' #µ¥»÷Í¼±ê×îĞ¡»¯
+    gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize' #å•å‡»å›¾æ ‡æœ€å°åŒ–
     echo
     echo -e "${Msg_info}os info read"
     sudo apt -y install neofetch
     echo
     echo -e "${Msg_info}network quality"
-    sudo pip3 -y install speedtest_cli #command: speedtest
+    sudo pip3 install speedtest_cli #command: speedtest
     echo
     echo -e "${Msg_Info}system monitor plugin"
-    sudo add-apt-repoory ppa:fossfreedom/indicator-sysmonitor
+    sudo add-apt-repository ppa:fossfreedom/indicator-sysmonitor
     sudo apt -y install indicator-sysmonitor
     echo
     echo -e "${Msg_Info}lightness adjustment plugin"
-    sudo add-apt-repoory ppa:apandada1/brightness-controller 
+    sudo add-apt-repository ppa:apandada1/brightness-controller 
     sudo apt -y install brightness-controller
     echo
 }
 
-AppSetup() #³£ÓÃÈí¼ş°²×°
+AppSetup() #å¸¸ç”¨è½¯ä»¶å®‰è£…
 {
     echo -e "${Msg_Info}chrome"
     sudo dpkg -i /media/zengke/MyPassport/Software/daliy/daliy.browser/google-chrome-stable_current_amd64.deb
@@ -111,13 +112,13 @@ AppSetup() #³£ÓÃÈí¼ş°²×°
     sudo apt install -y qbittorrent
     echo
     echo -e "${Msg_Info}vscode"
-    sudo dpkg -i /media/zengke/MyPassport/Software/works/edit.code¡¤Microsoft/linux/code_1.49.0-1599744551_amd64.deb
+    sudo dpkg -i /media/zengke/MyPassport/Software/works/edit.codeÂ·Microsoft/linux/code_1.49.0-1599744551_amd64.deb
     echo
     echo -e "${Msg_Info}NetCloud music"
     sudo dpkg -i /media/zengke/MyPassport/Software/daliy/daliy.music.163/netease-cloud-music_1.2.1_amd64_ubuntu_20190428.deb
 }
 
-cudaSetup() #cuda¿ª·¢»·¾³°²×°
+cudaSetup() #cudaå¼€å‘ç¯å¢ƒå®‰è£…
 {
     echo -e "${Msg_Info}cuda setup"
     echo
@@ -161,7 +162,7 @@ cudaSetup() #cuda¿ª·¢»·¾³°²×°
     sudo apt autoremove
 }
 
-sysTimeR() #Í¬²½ÏµÍ³Ê±ÖÓ
+sysTimeR() #åŒæ­¥ç³»ç»Ÿæ—¶é’Ÿ
 {
     echo -e "${Msg_Info}Setup Time Service"
     sudo apt install -y ntpdate
@@ -171,17 +172,17 @@ sysTimeR() #Í¬²½ÏµÍ³Ê±ÖÓ
     sudo hwclock --localtime --systohc
 }
 
-systemRapair() #ÏµÍ³Ëğ»µ²å¼şĞŞ¸´
+systemRapair() #ç³»ç»ŸæŸåæ’ä»¶ä¿®å¤
 {
     sudo apt --fix-broken install
     sudo apt --fix-missing install
     # sudo dpkg -i --force-overwrite *.deb
     sudo apt -y upgrade
     sudo apt -y update
-    sudo updatedb #¸üĞÂÎÄ¼şÏµÍ³
+    sudo updatedb #æ›´æ–°æ–‡ä»¶ç³»ç»Ÿ
 }
 
-nvidiaVerify() #nvidia ÓĞ¹ØµÄĞÅÏ¢
+nvidiaVerify() #nvidia æœ‰å…³çš„ä¿¡æ¯
 {
     echo -e "${nvidia driver}"
     nvidia-smi 
@@ -189,7 +190,7 @@ nvidiaVerify() #nvidia ÓĞ¹ØµÄĞÅÏ¢
     nvcc -V
 }
 
-envirInfo() #ÏµÍ³»·¾³Ïà¹ØµÄĞÅÏ¢
+envirInfo() #ç³»ç»Ÿç¯å¢ƒç›¸å…³çš„ä¿¡æ¯
 {
     echo -e "${Msg_Info}version information."
     gcc --version
