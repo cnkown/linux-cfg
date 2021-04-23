@@ -23,7 +23,7 @@ desktop&server configure shell script
   更新文件 apt upgrade
   修复文件 apt --fix-broken --install
   强制覆盖文件 dpkg -i --force-overwrite *.deb
-  清除缓存 apt autoclean && apt autoremove
+  清除缓存以及孤立软件包 apt autoclean && apt autoremove
   重启操作系统 reboot
   
 4、git 代理加速

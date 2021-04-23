@@ -50,7 +50,7 @@ envirmentSetup()
     apt install -y vim
     echo
     mv /etc/vim/vimrc /etc/vim/vimrc.bak
-    cp ${START_PATH}/../vim_cfg/vimrc /etc/vimrc
+    cp ${START_PATH}/../app/vim_cfg/vimrc /etc/vimrc
     pip3 install --upgrade pip
     echo
     apt -y update
@@ -106,7 +106,7 @@ v2raySetup()
     if [[ ${V2_CFG} == "yes" || ${V2_CFG} == "y" ]]; then
         echo -e "${Msg_Success}you need config v2ray id. and last v2ray configure file has been bakup."
         mv /usr/local/etc/v2ray/config.json /usr/local/etc/v2ray/config.json.bak
-        cp ${START_PATH}/../v2ray_cfg/v2ray.config.json /usr/local/etc/v2ray/config.json
+        cp ${START_PATH}/../app/v2ray_cfg/v2ray.config.json /usr/local/etc/v2ray/config.json
         cat /usr/local/etc/v2ray/config.json.bak
         echo -e "${Msg_Info}replace xxx with bak id."
         vim /usr/local/etc/v2ray/config.json
@@ -140,7 +140,7 @@ transSetup()
         vim /var/lib/transmission/.config/transmission-daemon/settings.json
     else
         mv /var/lib/transmission-daemon/.config/transmission-daemon/settings.json /var/lib/transmission-daemon/.config/transmission-daemon/settings.json.bak
-        cp ${START_PATH}/transmission/transmission.settings.json /var/lib/transmission-daemon/.config/transmission-daemon/settings.json
+        cp ${START_PATH}/../app/transmission/transmission.settings.json /var/lib/transmission-daemon/.config/transmission-daemon/settings.json
         echo -e "${Msg_Warning}PLEASE CONFIGURE PASSWORD."
         vim /var/lib/transmission-daemon/.config/transmission-daemon/settings.json
     fi
@@ -165,7 +165,7 @@ nginxSetup()
     echo -e "${Msg_Info}setup remote server with nginx service"
     apt install -y nginx
     mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
-    cp ${START_PATH}/nginx/nginx.conf /etc/nginx/nginx.conf
+    cp ${START_PATH}/../app/nginx/nginx.conf /etc/nginx/nginx.conf
     echo -e "${Msg_Info}register nginx service"
     systemctl enable nginx
     echo -e "${Msg_Info}loading nginx service"

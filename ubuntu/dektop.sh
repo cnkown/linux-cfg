@@ -49,9 +49,9 @@ osInfo() #输出系统信息
     echo -e "${Msg_Info}Output os infomation"
     neofetch 
     echo
-    echo -e "${Msg_Info}Network quality test"
-    speedtest
-    echo
+    # echo -e "${Msg_Info}Network quality test" #python3对speedtest_cli支持不好
+    # speedtest
+    # echo
     read -p "${Msg_Success}press any key to Continue."
 }
 
@@ -60,18 +60,23 @@ envirSetup() #环境安装与部署
     echo -e "${Msg_Info}terminal base envirment setup"
     sudo apt -y install net-tools wget curl firewalld #ifconfig
     sudo apt -y install python3-pip #above 18.04 lts
-    sudo apt -y install screen tar #-xvf 解压 、-cvf 加压 
+    sudo apt -y install screen tar #-xvf 解压 、-cvf 加压;gz -z 
     sudo apt -y install vim git
+    echo 
+    sudo mv /etc/vim/vimrc /etc/vim/vimrc.bak
+    sudo cp ${START_PATH}/../app/vim_cfg/vimrc /etc/vim/vimrc
+    echo
     sudo apt -y install gcc 
     sudo apt -y install locate #文件搜索命令,find [路径] [文件属性]
     sudo apt -y update # update sources
     sudo apt -y upgrade # update software
     echo
     echo -e "${Msg_Info}java envirment setup"
-    sudo add-apt-repository ppa:webupd8team/java
-    sudo apt -y install java-1.8.0-openjdk-1_amd64
-    sudo update-java-alternatives -l #列举一系列的java安装版本
-    sudo update-java-alternatives -s java-1.8.0-openjdk-amd64 #切换到指定的java版本 -s --select
+    # sudo add-apt-repository ppa:webupd8team/java
+    # sudo apt -y install java-1.8.0-openjdk-1_amd64
+    # sudo update-java-alternatives -l #列举一系列的java安装版本
+    # sudo update-java-alternatives -s java-1.8.0-openjdk-amd64 #切换到指定的java版本 -s --select
+    sudo apt -y install openjdk-11-jdk #安装java版本11，ubuntu20.10
     echo
     echo -e "${Msg_Info}os cache remove"
     sudo apt -y autoremove 
@@ -90,32 +95,32 @@ pluginSetup() #系统美化与可用插件
     echo -e "${Msg_info}os info read"
     sudo apt -y install neofetch
     echo
-    echo -e "${Msg_info}network quality"
-    sudo pip3 install speedtest_cli #command: speedtest
-    echo
+    # echo -e "${Msg_info}network quality" #useless
+    # sudo pip3 install speedtest_cli #command: speedtest
+    # echo
     echo -e "${Msg_Info}system monitor plugin"
     sudo add-apt-repository ppa:fossfreedom/indicator-sysmonitor
     sudo apt -y install indicator-sysmonitor
     echo
-    echo -e "${Msg_Info}lightness adjustment plugin"
-    sudo add-apt-repository ppa:apandada1/brightness-controller 
-    sudo apt -y install brightness-controller
-    echo
+    # echo -e "${Msg_Info}lightness adjustment plugin" #useless
+    # sudo add-apt-repository ppa:apandada1/brightness-controller 
+    # sudo apt -y install brightness-controller
+    # echo
 }
 
 AppSetup() #常用软件安装
 {
-    echo -e "${Msg_Info}chrome"
-    sudo dpkg -i /media/zengke/MyPassport/Software/daliy/daliy.browser/google-chrome-stable_current_amd64.deb
+    echo -e "${Msg_Info}qv2ray"
+    sudo snap install -y qv2ray
+    read -p "${Msg_Info}注意添加核心支持文件，v2ray-core.(任意键继续)"
     echo
-    echo -e "${Msg_Info}qbittrrent"
-    sudo apt install -y qbittorrent
+    echo -e "${Msg_Info}motrix"
+    sudo snap install -y motrix
     echo
-    echo -e "${Msg_Info}vscode"
-    sudo dpkg -i /media/zengke/MyPassport/Software/works/edit.code·Microsoft/linux/code_1.49.0-1599744551_amd64.deb
+    echo  -e "${Msg_Info}cmake"
+    sudo snap install -y cmake
     echo
-    echo -e "${Msg_Info}NetCloud music"
-    sudo dpkg -i /media/zengke/MyPassport/Software/daliy/daliy.music.163/netease-cloud-music_1.2.1_amd64_ubuntu_20190428.deb
+    echo -e "${Msg_Info}vscode、NetCloud music"
 }
 
 cudaSetup() #cuda开发环境安装
@@ -124,38 +129,47 @@ cudaSetup() #cuda开发环境安装
     echo
     read -p "${Msg_Warning}Input your os edition(1804 or 2010):" ose
     if [[ ${ose} == "1804" ]]; then
+        # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin
+        # sudo mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
+        # wget https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda-repo-ubuntu1804-11-3-local_11.3.0-465.19.01-1_amd64.deb
+        # sudo dpkg -i cuda-repo-ubuntu1804-11-3-local_11.3.0-465.19.01-1_amd64.deb
+        # sudo apt-key add /var/cuda-repo-ubuntu1804-11-3-local/7fa2af80.pub
+        # sudo apt-get update
+        # sudo apt-get -y install cuda
         wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin
         sudo mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
-        # wget https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda-repo-ubuntu1804-11-2-local_11.2.2-460.32.03-1_amd64.deb
-        # sudo dpkg -i cuda-repo-ubuntu1804-11-2-local_11.2.2-460.32.03-1_amd64.deb
-        sudo dpkg -i /media/zengke/MyPassport/Software/works/desTool.embedded.nvidia/cuda/cuda-repo-ubuntu1804-11-2-local_11.2.2-460.32.03-1_amd64.deb
-        sudo apt-key add /var/cuda-repo-ubuntu1804-11-2-local/7fa2af80.pub
-        sudo apt update
-        sudo apt -y install cuda
+        sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+        sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/ /"
+        sudo apt-get update
+        sudo apt-get -y install cuda
         echo
         echo -e "${Msg_Info}You need manual install cuda-toolkit with 'apt -y install nvidia-cuda-toolkit'." # tips after exit
         read -p "${Msg_Success}press any key to Continue."
     else if [[ ${ose} == "2004" ]]; then
+        # wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+        # sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+        # wget https://developer.download.nvidia.com/compute/cuda/11.3.0/local_installers/cuda-repo-ubuntu2004-11-3-local_11.3.0-465.19.01-1_amd64.deb
+        # sudo dpkg -i cuda-repo-ubuntu2004-11-3-local_11.3.0-465.19.01-1_amd64.deb
+        # sudo apt-key add /var/cuda-repo-ubuntu2004-11-3-local/7fa2af80.pub
+        # sudo apt-get update
+        # sudo apt-get -y install cuda
         wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
         sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-        # wget https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda-repo-ubuntu2004-11-2-local_11.2.2-460.32.03-1_amd64.debsudo 
-        # dpkg -i cuda-repo-ubuntu2004-11-2-local_11.2.2-460.32.03-1_amd64.deb
-        dpkg -i /media/zengke/MyPassport/Software/works/desTool.embedded.nvidia/cuda/cuda-repo-ubuntu2004-11-2-local_11.2.2-460.32.03-1_amd64.deb
-        sudo apt-key add /var/cuda-repo-ubuntu2004-11-2-local/7fa2af80.pub
-        sudo apt update
-        sudo apt -y install cuda
+        sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
+        sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+        sudo apt-get update
+        sudo apt-get -y install cuda
         echo
         echo -e "${Msg_Info}You need manual install cuda-toolkit with 'apt -y install nvidia-cuda-toolkit'." # tips after exit
         read -p "${Msg_Success}press any key to Continue."
     else
         echo -e "${Msg_Error}error input!"
-        read -p "${Msg_Warning}again(yes or no):" ag
+        read -p "${Msg_Warning}continue install cuda.(yes or no):" ag
         if [[ ${ag} == "yes" || ${ag} == "y" ]]; then
             echo -e "${Msg_Info}cuda setup again."
             cudaSetup
         else
             echo -e "${Msg_Info}cuda setup stop."
-            exit 0
         fi
     fi
     sudo apt autoclean # clean os cache
@@ -194,8 +208,8 @@ envirInfo() #系统环境相关的信息
 {
     echo -e "${Msg_Info}version information."
     gcc --version
-    java --version
-    python --version
+    java -version
+    # python --version
     python3 --version
     read -p "${Msg_Success}press any key to Continue."
 }
