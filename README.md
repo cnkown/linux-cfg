@@ -1,8 +1,8 @@
-# linux eassy start
-desktop&server configure shell script
+# linux auto shell
+for desktop and server
 
-注意事项：
-1、500G容量分区
+tips：
+1、500GiB disk
   512MiB /efi
   100GiB /root
   60GiB /var
@@ -10,7 +10,7 @@ desktop&server configure shell script
   250GiB /home
   other /swap-area
 
-2、插件
+2、plugin
   tweak-tool\
   qbittorrent\
   vscode\
@@ -19,18 +19,19 @@ desktop&server configure shell script
   sdk manager
   
 3、cuda runtime
-  cuda-toolkit：添加源、安装包获取、释放数据、更新源、安装 %相关链接 https://developer.nvidia.com/cuda-downloads
-  更新文件 apt upgrade
-  修复文件 apt --fix-broken --install
-  强制覆盖文件 dpkg -i --force-overwrite *.deb
-  清除缓存以及孤立软件包 apt autoclean && apt autoremove
-  重启操作系统 reboot
+  cuda-toolkit：add repository, get software package, release cache, update repository, install software. link: https://developer.nvidia.com/cuda-downloads
+  something commands with related.
+  update software verison: apt upgrade
+  fixing broken software: apt --fix-broken --install
+  force overwrite software: dpkg -i --force-overwrite *.deb
+  clear cache and remove alone software packages: apt autoclean && apt autoremove
+  rebooting: reboot
   
-4、git 代理加速
+4、git proxy speedup
   git config --global http.proxy "http://127.0.0.1:1081"
   git config --global https.proxy "http://127.0.0.1:1081"
   
-  消除代理
+  cancel proxy
   git config --global --unset http.proxy
   git config --global --unset https.proxy
 
