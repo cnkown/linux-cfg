@@ -5,14 +5,14 @@
         "loglevel": "warning"
     },
     "inbound": {
-        "port": 2443,
+        "port": 443,
         "protocol": "vmess",
         "settings": {
             "clients": [
                 {
-                    "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                    "id": "xxxx",
                     "level": 1,
-                    "alterId": 100
+                    "alterId": 0
                 }
             ]
         }

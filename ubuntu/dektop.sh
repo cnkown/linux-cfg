@@ -22,46 +22,40 @@ Msg_Fail="${Font_Red}[Failed] ${Font_Suffix}"
 START_PATH=$(pwd)
 CURTIME=$(date "+%Y%m%d%H%M%S")
 
-reboot_os() #重启本地主机
+osReboot() #重启本地主机
 {
     echo
-    echo -e "${Msg_Info}The system needs to reboot."
-    read -p "${Msg_Warning}Restart takes effect immediately. Do you want to restart system? [y/n]" is_reboot
+    echo -e "${Msg_Info}system needs to reboot."
+    read -p "${Msg_Warning}reboot takes effect immediately. Do you want to reboot? [y/n]" is_reboot
     if [[ ${is_reboot} == "y" || ${is_reboot} == "Y" ]]; then
         reboot
     else
-        echo -e "${Msg_Info}Reboot has been canceled..."
+        echo -e "${Msg_Info}reboot has been canceled..."
         exit 0
     fi
 }
 
 osInfo() #输出系统信息
 {
-    echo -e "${Msg_Info}Disk partitions and capacity remaining"
-    df -h
-    echo
-    echo -e "${Msg_Info}Current memory status"
-    free -h
-    echo
-    echo -e "${Msg_Info}Current Kernal info"
+    echo -e "${Msg_Info}\n\n\nkernal INFO"
     uname -a
-    echo
-    echo -e "${Msg_Info}Output os infomation"
-    neofetch 
-    echo
-    # echo -e "${Msg_Info}Network quality test" #python3对speedtest_cli支持不好
+    echo -e "${Msg_Info}\n\n\ndisk partition"
+    df -h
+    echo -e "${Msg_Info}\n\n\nmemory status"
+    free -h
+    # echo -e "${Msg_Info}OS INFO" 
+    # neofetch 
+    # echo -e "${Msg_Info}Network testing" 
     # speedtest
-    # echo
-    read -p "${Msg_Success}press any key to Continue."
 }
 
 envirSetup() #环境安装与部署
 {
-    echo -e "${Msg_Info}terminal base envirment setup"
-    sudo apt -y install net-tools wget curl firewalld #ifconfig
-    sudo apt -y install python3-pip #above 18.04 lts
-    sudo apt -y install screen tar #-xvf 解压 、-cvf 加压;gz -z 
-    sudo apt -y install vim git
+    echo -e "${Msg_Info}\n\n\nSYSTEM UPDATE"
+    sudo apt -y update && sudo apt -y upgrade
+    echo -e "${Msg_Info}\n\n\nCOMMON ENVIRONMENT SETUP"
+    sudo apt -y install net-tools wget curl firewalld screen tar vim git #ifconfig; -xvf/-cvf, gz -z 
+    # sudo apt -y install python3-pip #above 18.04 lts
     echo 
     sudo mv /etc/vim/vimrc /etc/vim/vimrc.bak
     sudo cp ${START_PATH}/../app/vim_cfg/vimrc /etc/vim/vimrc
@@ -230,7 +224,7 @@ main()
         cudaSetup
         sysTimeR
         systemRapair
-        reboot_os
+        osReboot
     else
         osInfo
         echo
