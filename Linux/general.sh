@@ -8,6 +8,7 @@
 # |epel（extra packages for enterprise linux）是由 Fedora 社区打造                   |
 # |为RHEL及衍生发行版提供高质量软件包的项目，装EPEL,第三方源                           |
 # |     bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install-release.sh)                 |
+# |     bash <(curl -L -s https://install.direct/go.sh)                              |
 # |     systemctl enable/start/stop/restart service.name/v2ray                      |
 # |     bash <(curl -s -L https://git.io/v2ray.sh)  :v2+cdn   
 # |     https://intmainreturn0.com/v2ray-config-gen/#
